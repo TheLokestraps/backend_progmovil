@@ -1,41 +1,71 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
+import httpErrors from 'http-errors';
+import morgan from 'morgan';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+import errorMiddleware from './src/middlewares/error.js';
+import notFoundMiddelware from './src/middlewares/not-found.js';
 
-var app = express();
+const App = (routes) => {
+  const app = express();
+  const port = process.env.PORT || 3000;
+  const env = process.env.NODE_ENV || 'development';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+  const listen = () => {
+    app.listen(port, () => {
+      console.log('=================================');
+      console.log(`======= ENV: ${env} =======`);
+      console.log(`🚀 App listening on the port ${port}`);
+      console.log('=================================');
+    });
+  };
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+  const initializeViewEngine = () => {
+    app.set('views', join(__dirname, 'views'));
+    app.set('view engine', 'pug');
+  };
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+  const initializeMiddlewares = () => {
+    app.use(morgan('dev'));
+    app.use(cors({ origin: true, credentials: true }));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+    app.use(express.static(join(__dirname, 'public')));
+  };
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  const initializeRoutes = () => {
+    routes.forEach((route) => {
+      app.use('/', route.router);
+    });
+  };
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+  const initializeErrorHandling = () => {
+    app.use(errorMiddleware);
+  };
 
-module.exports = app;
+  const initializeNotFoundRequestHandling = () => {
+    app.use((_req, _res, next) => {
+      next(httpErrors(404))
+    });
+
+    app.use(notFoundMiddelware);
+  }
+
+  return {
+    initializeErrorHandling,
+    initializeMiddlewares,
+    initializeNotFoundRequestHandling,
+    initializeViewEngine,
+    initializeRoutes,
+    listen,
+  };
+};
+
+export default App;

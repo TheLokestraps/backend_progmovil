@@ -1,12 +1,16 @@
 import bcrypt from 'bcrypt';
 
 import HttpException from '../exceptions/HttpException.js';
+
+import jwtServices from '../services/jwt.js';
+
 import db from '../../firebase.config.js';
 
 const USER_COLLECTION = 'users';
 
 const UserService = () => {
   const usersRef = db.collection(USER_COLLECTION);
+  const JwtServices = jwtServices();
 
   const findAllUser = async () => {
     const queryUsers = await usersRef.get();
@@ -64,6 +68,25 @@ const UserService = () => {
 
     return deleteUserById;
   };
+
+    const loginUser = async (userData) => {
+    
+      if (!userData) throw new HttpException(400, 'User data not available.');
+      
+      const findUser = await usersRef.where("email", "==", userData.email).get();
+      
+      if(findUser.empty) throw new HttpException(409, `You're email ${userData.email} not exists`);
+
+      const user = findUser.docs[0].data();
+      const isPasswordMatching = await bcrypt.compare(userData.password, user.password);
+
+      if (!isPasswordMatching) throw new HttpException(409, `You're password not matching`);
+
+      const accessToken = await JwtServices.generateAccessToken(user.email);
+
+      return(accessToken);
+
+    }
 
   return {
     createUser,

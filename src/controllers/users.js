@@ -58,6 +58,20 @@ const UsersController = () => {
     }
   };
 
+  const loginUser = async (req, res, next) => {
+    try {
+      const userData = req.body;
+
+      const loginUser = await userService.loginUser(userData);
+
+      res.status(201).json({ data: loginUser, message: 'created' });
+    
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
   return {
     createUser,
     deleteUser,

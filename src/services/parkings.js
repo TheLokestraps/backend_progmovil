@@ -2,10 +2,10 @@ import db from '../../firebase.config.js';
 import { PARKINGS_COLLECTION } from '../constant/collections.js';
 import HttpException from '../exceptions/HttpException.js';
 
-const ParkingService = () => {
+const ParkingsService = () => {
   const parkingsRef = db.collection(PARKINGS_COLLECTION);
 
-  const findAllParking = async () => {
+  const findAllParkings = async () => {
     const queryParkings = await parkingsRef.get();
     const parkings = queryParkings.docs.map((parking) => ({ id: parking.id, ...parking.data() }));
 
@@ -69,10 +69,10 @@ const ParkingService = () => {
   return {
     createParking,
     deleteParking,
-    findAllParking,
+    findAllParkings,
     findParkingById,
     updateParking,
   };
 };
 
-export default ParkingService;
+export default ParkingsService;

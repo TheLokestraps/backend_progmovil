@@ -4,7 +4,7 @@ import db from '../../firebase.config.js';
 import { USERS_COLLECTION } from '../constant/collections.js';
 import HttpException from '../exceptions/HttpException.js';
 
-const UserService = () => {
+const UsersService = () => {
   const usersRef = db.collection(USERS_COLLECTION);
 
   const findAllUser = async () => {
@@ -83,4 +83,4 @@ const UserService = () => {
   };
 };
 
-export default UserService;
+export default UsersService;

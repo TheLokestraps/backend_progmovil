@@ -1,11 +1,11 @@
-import UserService from '../services/users.js';
+import UsersService from '../services/users.js';
 
 const UsersController = () => {
-  const userService = UserService();
+  const usersService = UsersService();
 
   const getUsers = async (_req, res, next) => {
     try {
-      const findAllUsersData = await userService.findAllUser();
+      const findAllUsersData = await usersService.findAllUser();
 
       res.status(200).json({ data: findAllUsersData, message: 'findAll' });
     } catch (error) {
@@ -16,7 +16,7 @@ const UsersController = () => {
   const getUserById = async (req, res, next) => {
     try {
       const userId = req.params.id;
-      const findUserData = await userService.findUserById(userId);
+      const findUserData = await usersService.findUserById(userId);
 
       res.status(200).json({ data: findUserData, message: 'findOne' });
     } catch (error) {
@@ -27,7 +27,7 @@ const UsersController = () => {
   const createUser = async (req, res, next) => {
     try {
       const userData = req.body;
-      const createUserData = await userService.createUser(userData);
+      const createUserData = await usersService.createUser(userData);
 
       res.status(201).json({ data: createUserData, message: 'created' });
     } catch (error) {
@@ -39,7 +39,7 @@ const UsersController = () => {
     try {
       const userId = req.params.id;
       const userData = req.body;
-      const updateUserData = await userService.updateUser(userId, userData);
+      const updateUserData = await usersService.updateUser(userId, userData);
 
       res.status(200).json({ data: updateUserData, message: 'updated' });
     } catch (error) {
@@ -50,7 +50,7 @@ const UsersController = () => {
   const deleteUser = async (req, res, next) => {
     try {
       const userId = req.params.id;
-      const deleteUserData = await userService.deleteUser(userId);
+      const deleteUserData = await usersService.deleteUser(userId);
 
       res.status(200).json({ data: deleteUserData, message: 'deleted' });
     } catch (error) {

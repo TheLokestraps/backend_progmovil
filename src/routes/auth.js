@@ -2,11 +2,11 @@ import { Router } from 'express';
 import AuthController from '../controllers/auth.js';
 
 const AuthRoute = () => {
-  const path = '/login';
+  const path = '/';
   const router = Router();
   const controller = AuthController();
 
-  router.post(`${path}`, controller.login);
+  router.post(`${path}login`, controller.login);
 
   return { path, router };
 };

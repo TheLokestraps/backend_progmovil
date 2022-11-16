@@ -9,6 +9,7 @@ const UsersRoute = () => {
   router.get(`${path}`, controller.getUsers);
   router.get(`${path}/:id`, controller.getUserById);
   router.post(`${path}`, controller.createUser);
+  router.post(`${path}/login`, controller.loginUser);
 
   return { path, router };
 };

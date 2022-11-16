@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -13,20 +14,20 @@ const App = (routes) => {
   const app = express();
   const port = process.env.PORT || 3000;
   const env = process.env.NODE_ENV || 'development';
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  const systemFilename = fileURLToPath(import.meta.url);
+  const systemDirname = dirname(systemFilename);
 
   const listen = () => {
     app.listen(port, () => {
-      console.log('=================================');
-      console.log(`======= ENV: ${env} =======`);
-      console.log(`🚀 App listening on the port ${port}`);
-      console.log('=================================');
+      console.info('=================================');
+      console.info(`======= ENV: ${env} =======`);
+      console.info(`🚀 App listening on the port ${port}`);
+      console.info('=================================');
     });
   };
 
   const initializeViewEngine = () => {
-    app.set('views', join(__dirname, 'views'));
+    app.set('views', join(systemDirname, 'views'));
     app.set('view engine', 'pug');
   };
 
@@ -37,7 +38,7 @@ const App = (routes) => {
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
 
-    app.use(express.static(join(__dirname, 'public')));
+    app.use(express.static(join(systemDirname, 'public')));
   };
 
   const initializeRoutes = () => {
@@ -52,11 +53,11 @@ const App = (routes) => {
 
   const initializeNotFoundRequestHandling = () => {
     app.use((_req, _res, next) => {
-      next(httpErrors(404))
+      next(httpErrors(404));
     });
 
     app.use(notFoundMiddelware);
-  }
+  };
 
   return {
     initializeErrorHandling,

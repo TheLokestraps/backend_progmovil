@@ -1,16 +1,11 @@
 import bcrypt from 'bcrypt';
 
+import db from '../../firebase.config.js';
+import { USERS_COLLECTION } from '../constant/collections.js';
 import HttpException from '../exceptions/HttpException.js';
 
-import jwtServices from '../services/jwt.js';
-
-import db from '../../firebase.config.js';
-
-const USER_COLLECTION = 'users';
-
 const UserService = () => {
-  const usersRef = db.collection(USER_COLLECTION);
-  const JwtServices = jwtServices();
+  const usersRef = db.collection(USERS_COLLECTION);
 
   const findAllUser = async () => {
     const queryUsers = await usersRef.get();
@@ -19,8 +14,8 @@ const UserService = () => {
     return users;
   };
 
-  const findUserById = async (userId)=> {
-    if (!userId) throw new HttpException(400, "UserId nor available.");
+  const findUserById = async (userId) => {
+    if (!userId) throw new HttpException(400, 'UserId nor available.');
 
     const findUser = await usersRef.doc(userId).get();
     if (!findUser.exists) throw new HttpException(409, "You're not user.");
@@ -30,12 +25,15 @@ const UserService = () => {
 
   const createUser = async (userData) => {
     if (!userData) throw new HttpException(400, 'User data not available.');
-    
-    const findUser = await usersRef.where("email", "==", userData.email).get();
+
+    const findUser = await usersRef.where('email', '==', userData.email).get();
     if (!findUser.empty) throw new HttpException(409, `You're email ${userData.email} already exists.`);
-    
+
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const createUserData = await (await usersRef.add({ ...userData, password: hashedPassword })).get();
+    const createUserData = await (await usersRef.add({
+      ...userData,
+      password: hashedPassword,
+    })).get();
 
     return { id: createUserData.id, ...createUserData.data() };
   };
@@ -69,29 +67,22 @@ const UserService = () => {
     return deleteUserById;
   };
 
-    const loginUser = async (userData) => {
-    
-      if (!userData) throw new HttpException(400, 'User data not available.');
-      
-      const findUser = await usersRef.where("email", "==", userData.email).get();
-      
-      if(findUser.empty) throw new HttpException(409, `You're email ${userData.email} not exists`);
+  const findUserByEmail = async (email) => {
+    if (!email) throw new HttpException(400, 'Email nor available.');
 
-      const user = findUser.docs[0].data();
-      const isPasswordMatching = await bcrypt.compare(userData.password, user.password);
+    const findUser = await usersRef.where('email', '==', email).get();
+    if (findUser.empty) throw new HttpException(409, `You're email ${email} not exists.`);
 
-      if (!isPasswordMatching) throw new HttpException(409, `You're password not matching`);
+    const user = findUser.docs.map((userDoc) => ({ id: userDoc.id, ...userDoc.data() }))[0];
 
-      const accessToken = await JwtServices.generateAccessToken(user.email);
-
-      return(accessToken);
-
-    }
+    return { ...user };
+  };
 
   return {
     createUser,
     deleteUser,
     findAllUser,
+    findUserByEmail,
     findUserById,
     updateUser,
   };

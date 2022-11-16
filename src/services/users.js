@@ -15,7 +15,7 @@ const UserService = () => {
   };
 
   const findUserById = async (userId) => {
-    if (!userId) throw new HttpException(400, 'UserId nor available.');
+    if (!userId) throw new HttpException(400, 'UserId not available.');
 
     const findUser = await usersRef.doc(userId).get();
     if (!findUser.exists) throw new HttpException(409, "You're not user.");
@@ -41,11 +41,6 @@ const UserService = () => {
   const updateUser = async (userId, userData) => {
     if (!userData) throw new HttpException(400, 'User data not available.');
     const copyUser = { ...userData };
-
-    if (userData.email) {
-      const findUser = await usersRef.where('email', '==', userData.email).get();
-      if (findUser.empty) throw new HttpException(409, `You're email ${userData.email} doesn't exists.`);
-    }
 
     if (userData.password) {
       const hashedPassword = await bcrypt.hash(userData.password, 10);

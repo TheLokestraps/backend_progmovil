@@ -16,10 +16,10 @@ const UserService = () => {
   };
 
   const findUserById = async (userId)=> {
-    if (!userId) throw new HttpException(400, "You're not userId");
+    if (!userId) throw new HttpException(400, "UserId nor available.");
 
     const findUser = await usersRef.doc(userId).get();
-    if (!findUser.exists) throw new HttpException(409, "You're not user");
+    if (!findUser.exists) throw new HttpException(409, "You're not user.");
 
     return { id: findUser.id, ...findUser.data() };
   };
@@ -28,7 +28,7 @@ const UserService = () => {
     if (!userData) throw new HttpException(400, 'User data not available.');
     
     const findUser = await usersRef.where("email", "==", userData.email).get();
-    if (!findUser.empty) throw new HttpException(409, `You're email ${userData.email} already exists`);
+    if (!findUser.empty) throw new HttpException(409, `You're email ${userData.email} already exists.`);
     
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const createUserData = await (await usersRef.add({ ...userData, password: hashedPassword })).get();
@@ -36,40 +36,41 @@ const UserService = () => {
     return { id: createUserData.id, ...createUserData.data() };
   };
 
-  // const updateUser = async (userId: string, userData: CreateUserDto): Promise<User> => {
-  //   if (isEmpty(userData)) throw new HttpException(400, 'You're not userData');
-  //   const copyUser = { ...userData };
+  const updateUser = async (userId, userData) => {
+    if (!userData) throw new HttpException(400, 'User data not available.');
+    const copyUser = { ...userData };
 
-  //   if (copyUser.email) {
-  //     const findUser: User = await UserModel.findOne({ email: userData.email });
-  //     // eslint-disable-next-line no-underscore-dangle
-  //     if (findUser && findUser._id !== userId) throw new HttpException(409, `You're email ${userData.email} already exists`);
-  //   }
+    if (userData.email) {
+      const findUser = await usersRef.where('email', '==', userData.email).get();
+      if (findUser.empty) throw new HttpException(409, `You're email ${userData.email} doesn't exists.`);
+    }
 
-  //   if (copyUser.password) {
-  //     const hashedPassword = await bcrypt.hash(userData.password, 10);
-  //     copyUser.password = hashedPassword;
-  //   }
+    if (userData.password) {
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      copyUser.password = hashedPassword;
+    }
 
-  //   const updateUserById: User = await UserModel.findByIdAndUpdate(userId, { copyUser });
-  //   if (!updateUserById) throw new HttpException(409, 'You're not user');
+    const updateUserById = await usersRef.doc(userId).update({ ...copyUser });
+    if (!updateUserById) throw new HttpException(409, 'Update not available now, try later.');
 
-  //   return updateUserById;
-  // };
+    const updatedUser = await usersRef.doc(userId).get();
 
-  // const deleteUser = async (userId: string): Promise<User> => {
-  //   const deleteUserById: User = await UserModel.findByIdAndDelete(userId);
-  //   if (!deleteUserById) throw new HttpException(409, 'You're not user');
+    return { id: updatedUser.id, ...updatedUser.data() };
+  };
 
-  //   return deleteUserById;
-  // };
+  const deleteUser = async (userId) => {
+    const deleteUserById = await usersRef.doc(userId).delete();
+    if (!deleteUserById) throw new HttpException(409, 'Delete not available now, try later.');
+
+    return deleteUserById;
+  };
 
   return {
     createUser,
-    // deleteUser,
+    deleteUser,
     findAllUser,
     findUserById,
-    // updateUser,
+    updateUser,
   };
 };
 

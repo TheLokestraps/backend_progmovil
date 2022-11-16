@@ -9,6 +9,8 @@ const UsersRoute = () => {
   router.get(`${path}`, controller.getUsers);
   router.get(`${path}/:id`, controller.getUserById);
   router.post(`${path}`, controller.createUser);
+  router.put(`${path}/:id`, controller.updateUser);
+  router.delete(`${path}/:id`, controller.deleteUser);
 
   return { path, router };
 };

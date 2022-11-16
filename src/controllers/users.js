@@ -35,35 +35,35 @@ const UsersController = () => {
     }
   };
 
-  // const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  //   try {
-  //     const userId = req.params.id;
-  //     const userData: CreateUserDto = req.body;
-  //     const updateUserData: User = await userService.updateUser(userId, userData);
+  const updateUser = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const userData = req.body;
+      const updateUserData = await userService.updateUser(userId, userData);
 
-  //     res.status(200).json({ data: updateUserData, message: 'updated' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      res.status(200).json({ data: updateUserData, message: 'updated' });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-  // const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  //   try {
-  //     const userId = req.params.id;
-  //     const deleteUserData: User = await userService.deleteUser(userId);
+  const deleteUser = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const deleteUserData = await userService.deleteUser(userId);
 
-  //     res.status(200).json({ data: deleteUserData, message: 'deleted' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      res.status(200).json({ data: deleteUserData, message: 'deleted' });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   return {
     createUser,
+    deleteUser,
     getUserById,
     getUsers,
-    // updateUser,
-    // deleteUser,
+    updateUser,
   };
 };
 

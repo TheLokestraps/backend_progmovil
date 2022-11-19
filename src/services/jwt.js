@@ -1,41 +1,35 @@
 import jwt from 'jsonwebtoken';
-import HttpException from '../exceptions/HttpException.js';
 
 const JwtServices = () => {
-  const blacklistData = [];
-
   const secret = process.env.JWT_SECRET || 'mySecret';
+  const refreshSecret = process.env.JWT_REFRESH_SECRET || 'myRefreshSecret';
 
   /**
-   *
    * @param {Email} email Userid
+   * @param {Boolean} refresh flag
    * @returns {String}
    */
-  const generateAccessToken = (email) => {
-    console.log(secret);
+  const generateAccessToken = (email, refresh) => {
+    if (refresh) {
+      return jwt.sign({ email }, refreshSecret);
+    }
     return jwt.sign({ email }, secret, { expiresIn: '1d' });
   };
 
-  const toBlacklist = async (token) => {
-    blacklistData.push(token);
-  };
-
   /**
-   *
    * @param {String} token
    * @returns {{ email: String }}
    */
-  const verifyAccessToken = (token) => {
-    const bannedToken = blacklistData.find((element) => element === token);
-    if (bannedToken) throw new HttpException(401, 'Invalid token');
-
+  const verifyAccessToken = (token, refresh) => {
+    if (refresh) {
+      return jwt.verify(token, refreshSecret);
+    }
     return jwt.verify(token, secret);
   };
 
   return {
     generateAccessToken,
     verifyAccessToken,
-    toBlacklist,
   };
 };
 

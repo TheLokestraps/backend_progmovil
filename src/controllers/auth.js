@@ -8,7 +8,18 @@ const AuthController = () => {
       const userData = req.body;
       const loginUser = await authService.login(userData);
 
-      res.status(201).json({ data: loginUser, message: 'logged in' });
+      res.status(201).json({ data: loginUser, message: 'Logged in.' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  const refresh = async (req, res, next) => {
+    try {
+      const { refreshToken, email } = req.body;
+      const token = await authService.refresh(email, refreshToken);
+
+      res.status(200).json({ data: { token }, message: 'Refresh token.' });
     } catch (error) {
       next(error);
     }
@@ -16,6 +27,7 @@ const AuthController = () => {
 
   return {
     login,
+    refresh,
   };
 };
 

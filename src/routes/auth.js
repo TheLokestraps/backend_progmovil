@@ -7,6 +7,7 @@ const AuthRoute = () => {
   const controller = AuthController();
 
   router.post(`${path}login`, controller.login);
+  router.post(`${path}refresh`, controller.refresh);
 
   return { path, router };
 };

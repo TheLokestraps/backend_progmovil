@@ -13,6 +13,16 @@ const UsersController = () => {
     }
   };
 
+  const findUserByEmail = async (req, res, next) => {
+    try {
+      const findUser = await usersService.findUserByEmail();
+
+      res.status(200).json({ data: findUser, message: 'findOne' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   const getUserById = async (req, res, next) => {
     try {
       const userId = req.params.id;
@@ -61,6 +71,7 @@ const UsersController = () => {
   return {
     createUser,
     deleteUser,
+    findUserByEmail,
     getUserById,
     getUsers,
     updateUser,

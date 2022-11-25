@@ -2,3 +2,5 @@ export const PARKINGS_COLLECTION = 'parkings';
 export const PAYMENTS_COLLECTION = 'payments';
 export const USERS_COLLECTION = 'users';
 export const VEHICLES_COLLECTION = 'vehicles';
+export const CARDS_COLLECTION = 'cards';
+

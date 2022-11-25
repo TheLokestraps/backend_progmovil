@@ -15,7 +15,7 @@ const VehicleController = () => {
 
   const getVehicleByRegistration = async (req, res, next) => {
     try {
-      const { registration } = req.body;
+      const { registration } = req.params;
       const findvehicleData = await vehiclesService.findVehicleByRegistration(registration);
 
       res.status(200).json({ data: findvehicleData, message: 'findOne' });
@@ -26,8 +26,8 @@ const VehicleController = () => {
 
   const getAllVehicleByUserId = async (req, res, next) => {
     try {
-      const { userId } = req.body;
-      const findvehicleData = await vehiclesService.findAllVehiclesByUserId(userId);
+      const { email } = req.body;
+      const findvehicleData = await vehiclesService.findAllVehiclesByUserId(email);
 
       res.status(200).json({ data: findvehicleData, message: 'findOne' });
     } catch (error) {
@@ -41,6 +41,17 @@ const VehicleController = () => {
       const createvehicleData = await vehiclesService.createVehicle(vehicleData);
 
       res.status(201).json({ data: createvehicleData, message: 'created' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  const getVehicleById = async (req, res, next) => {
+    try {
+      const vehicleId = req.params.id;
+      const findUserData = await vehiclesService.findVehicleById(vehicleId);
+
+      res.status(200).json({ data: findUserData, message: 'findOne' });
     } catch (error) {
       next(error);
     }
@@ -74,6 +85,7 @@ const VehicleController = () => {
     deleteVehicle,
     getVehicleByRegistration,
     getVehicles,
+    getVehicleById,
     updateVehicle,
     getAllVehicleByUserId,
   };

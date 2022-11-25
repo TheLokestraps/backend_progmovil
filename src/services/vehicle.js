@@ -12,19 +12,28 @@ const VehiclesService = () => {
     return Vehicles;
   };
 
-  const findAllVehiclesByUserId = async (userId) => {
-    const queryVehicles = await VehiclesRef.where('userId', '==', userId).get();
-    const Vehicles = queryVehicles.docs.map((Vehicle) => ({ id: Vehicle.id, ...Vehicle.data() }));
-    return Vehicles;
+  const findAllVehiclesByUserId = async (userEmail) => {
+    const queryVehicles = await VehiclesRef.where('userEmail', '==', userEmail).get();
+
+    if (queryVehicles.empty) throw new HttpException(409, 'You dont have any vehicles.');
+
+    const Vehicles = queryVehicles.docs.map(
+      (Vehicle) => ({ id: Vehicle.id, ...Vehicle.data() }),
+    );
+
+    return { ...Vehicles };
   };
 
   const findVehicleByRegistration = async (registration) => {
     if (!registration) throw new HttpException(400, 'Registration not available.');
 
-    const findVehicle = await VehiclesRef.where('registration', '==', registration).get();
-    if (!findVehicle.exists) throw new HttpException(409, "Isn't a Vehicle.");
+    const queryVehicle = await VehiclesRef.where('registration', '==', registration).get();
 
-    return { id: findVehicle.id, ...findVehicle.data() };
+    if (queryVehicle.empty) throw new HttpException(409, "Vehicle doesn't exists.");
+
+    const vehicle = queryVehicle.docs.map((Vehicle) => ({ id: Vehicle.id, ...Vehicle.data() }))[0];
+
+    return { ...vehicle };
   };
 
   const createVehicle = async (Vehicle) => {
@@ -36,6 +45,15 @@ const VehiclesService = () => {
 
     const createVehicleData = await (await VehiclesRef.add({ ...Vehicle })).get();
     return { id: createVehicleData.id, ...createVehicleData.data() };
+  };
+
+  const findVehicleById = async (vehicleId) => {
+    if (!vehicleId) throw new HttpException(400, 'vehicle not available.');
+
+    const findVehicle = await VehiclesRef.doc(vehicleId).get();
+    if (!findVehicle.exists) throw new HttpException(409, "You're not user.");
+
+    return { id: findVehicle.id, ...findVehicle.data() };
   };
 
   const updateVehicle = async (VehicleId, Vehicle) => {
@@ -69,6 +87,7 @@ const VehiclesService = () => {
   return {
     createVehicle,
     deleteVehicle,
+    findVehicleById,
     findAllVehicles,
     findVehicleByRegistration,
     findAllVehiclesByUserId,

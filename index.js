@@ -5,8 +5,17 @@ import ParkingsRoute from './src/routes/parkings.js';
 import PaymentsRoute from './src/routes/payments.js';
 import UsersRoute from './src/routes/users.js';
 import VehiclesRoute from './src/routes/vehicles.js';
+import CardsRoute from './src/routes/cards.js';
 
-const server = App([AuthRoute(), HomeRoute(), ParkingsRoute(), PaymentsRoute(), UsersRoute(), VehiclesRoute()]);
+const server = App([
+  AuthRoute(),
+  HomeRoute(),
+  ParkingsRoute(),
+  PaymentsRoute(),
+  UsersRoute(),
+  VehiclesRoute(),
+  CardsRoute(),
+]);
 
 server.initializeViewEngine();
 server.initializeMiddlewares();

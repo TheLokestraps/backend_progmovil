@@ -9,6 +9,7 @@ const PaymentsRoute = () => {
 
   router.get(`${path}`, controller.getPayments);
   router.get(`${path}/:id`, controller.getPaymentById);
+  router.get(`${path}/users/:id`, controller.getAllPaymentsByUserId);
   router.post(`${path}`, authMiddleware, controller.createPayment);
   router.put(`${path}/:id`, controller.updatePayment);
   router.delete(`${path}/:id`, controller.deletePayment);

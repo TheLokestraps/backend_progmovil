@@ -13,6 +13,17 @@ const PaymentsController = () => {
     }
   };
 
+  const getAllPaymentsByUserId = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const findPaymentData = await paymentsService.findAllPaymentsByUserId(id);
+
+      res.status(200).json({ data: findPaymentData, message: 'findAllByID' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   const getPaymentById = async (req, res, next) => {
     try {
       const paymentId = req.params.id;
@@ -62,6 +73,7 @@ const PaymentsController = () => {
     createPayment,
     deletePayment,
     getPaymentById,
+    getAllPaymentsByUserId,
     getPayments,
     updatePayment,
   };

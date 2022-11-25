@@ -58,12 +58,38 @@ const ParkingsController = () => {
     }
   };
 
+  const addVehicleToParking = async (req, res, next) => {
+    try {
+      const { parkingId, vehicleId } = req.body;
+      const addVehicleToParkingData = await parkingsService
+        .addVehicleToParking(parkingId, vehicleId);
+
+      res.status(200).json({ data: addVehicleToParkingData, message: 'updated' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  const deleteVehicleFromParking = async (req, res, next) => {
+    try {
+      const { parkingId, vehicleId } = req.body;
+      const deleteVehicleFromParkingData = await parkingsService
+        .deleteVehicleFromParking(parkingId, vehicleId);
+
+      res.status(200).json({ data: deleteVehicleFromParkingData, message: 'updated' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   return {
     createParking,
     deleteParking,
     getParkingById,
     getParkings,
     updateParking,
+    addVehicleToParking,
+    deleteVehicleFromParking,
   };
 };
 

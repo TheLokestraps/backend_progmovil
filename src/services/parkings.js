@@ -34,11 +34,18 @@ const ParkingsService = () => {
     if (!vehicle) throw new HttpException(409, "Isn't a vehicle.");
 
     // eslint-disable-next-line max-len
-    const updateParking = await parkingsRef.doc(parkingId).update({ vehicles: [...parking.vehicles, vehicleId] });
+    if (parking.vehicles.length >= parking.maxParking) throw new HttpException(409, 'Parking is full.');
 
-    if (!updateParking) throw new HttpException(409, 'Update not available now, try later.');
+    if (parking.vehicles.includes(vehicleId)) throw new HttpException(409, 'Vehicle already in parking.');
 
-    return { id: parking.id, ...parking.data() };
+    const updateParkingById = await parkingsRef.doc(parkingId)
+      .update({ vehicles: [...parking.vehicles, vehicleId] });
+
+    if (!updateParkingById) throw new HttpException(409, 'Update not available now, try later.');
+
+    const updatedParking = await parkingsRef.doc(parkingId).get();
+
+    return { id: updatedParking.id, ...updatedParking.data() };
   };
 
   const createParking = async (parkingData) => {
@@ -86,6 +93,26 @@ const ParkingsService = () => {
     return deleteParkingById;
   };
 
+  const deleteVehicleFromParking = async (parkingId, vehicleId) => {
+    if (!parkingId) throw new HttpException(400, 'ParkingId not available.');
+    if (!vehicleId) throw new HttpException(400, 'VehicleId not available.');
+
+    const parking = await findParkingById(parkingId);
+    if (!parking) throw new HttpException(409, "Isn't a parking.");
+
+    const vehicle = await vehiclesService.findVehicleByRegistration(vehicleId);
+    if (!vehicle) throw new HttpException(409, "Isn't a vehicle.");
+
+    const updated = await parkingsRef.doc(parkingId)
+      .update({ vehicles: parking.vehicles.filter((v) => v !== vehicleId) });
+
+    if (!updated) throw new HttpException(409, 'Update not available now, try later.');
+
+    const updatedParking = await parkingsRef.doc(parkingId).get();
+
+    return { id: updatedParking.id, ...updatedParking.data() };
+  };
+
   return {
     createParking,
     deleteParking,
@@ -93,6 +120,7 @@ const ParkingsService = () => {
     findAllParkings,
     findParkingById,
     updateParking,
+    deleteVehicleFromParking,
   };
 };
 

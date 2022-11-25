@@ -6,9 +6,11 @@ import httpErrors from 'http-errors';
 import morgan from 'morgan';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-
+import * as dotenv from 'dotenv';
 import errorMiddleware from './src/middlewares/error.js';
 import notFoundMiddelware from './src/middlewares/not-found.js';
+
+dotenv.config();
 
 const App = (routes) => {
   const app = express();

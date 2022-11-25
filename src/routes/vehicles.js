@@ -9,7 +9,7 @@ const VehiclesRoute = () => {
 
   router.get(`${path}`, authMiddleware, controller.getVehicles);
   router.get(`${path}`, authMiddleware, controller.getVehicleByRegistration);
-  router.get(`${path}`, authMiddleware, controller.getVehicleByUserId);
+  router.get(`${path}`, authMiddleware, controller.getAllVehicleByUserId);
   router.post(`${path}`, authMiddleware, controller.createVehicle);
   router.put(`${path}/:id`, authMiddleware, controller.updateVehicle);
   router.delete(`${path}/:id`, authMiddleware, controller.deleteVehicle);

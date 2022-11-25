@@ -5,7 +5,7 @@ const VehicleController = () => {
 
   const getVehicles = async (_req, res, next) => {
     try {
-      const findAllvehiclesData = await vehiclesService.findAllvehicles();
+      const findAllvehiclesData = await vehiclesService.findAllVehicles();
 
       res.status(200).json({ data: findAllvehiclesData, message: 'findAll' });
     } catch (error) {
@@ -16,7 +16,7 @@ const VehicleController = () => {
   const getVehicleByRegistration = async (req, res, next) => {
     try {
       const { registration } = req.body;
-      const findvehicleData = await vehiclesService.getvehicleByRegistration(registration);
+      const findvehicleData = await vehiclesService.findVehicleByRegistration(registration);
 
       res.status(200).json({ data: findvehicleData, message: 'findOne' });
     } catch (error) {
@@ -24,10 +24,10 @@ const VehicleController = () => {
     }
   };
 
-  const getVehicleByUserId = async (req, res, next) => {
+  const getAllVehicleByUserId = async (req, res, next) => {
     try {
       const { userId } = req.body;
-      const findvehicleData = await vehiclesService.findvehicleByUserId(userId);
+      const findvehicleData = await vehiclesService.findAllVehiclesByUserId(userId);
 
       res.status(200).json({ data: findvehicleData, message: 'findOne' });
     } catch (error) {
@@ -38,7 +38,7 @@ const VehicleController = () => {
   const createVehicle = async (req, res, next) => {
     try {
       const vehicleData = req.body;
-      const createvehicleData = await vehiclesService.createvehicle(vehicleData);
+      const createvehicleData = await vehiclesService.createVehicle(vehicleData);
 
       res.status(201).json({ data: createvehicleData, message: 'created' });
     } catch (error) {
@@ -50,7 +50,7 @@ const VehicleController = () => {
     try {
       const vehicleId = req.params.id;
       const vehicleData = req.body;
-      const updatevehicleData = await vehiclesService.updatevehicle(vehicleId, vehicleData);
+      const updatevehicleData = await vehiclesService.updateVehicle(vehicleId, vehicleData);
 
       res.status(200).json({ data: updatevehicleData, message: 'updated' });
     } catch (error) {
@@ -61,7 +61,7 @@ const VehicleController = () => {
   const deleteVehicle = async (req, res, next) => {
     try {
       const vehicleId = req.params.id;
-      const deletevehicleData = await vehiclesService.deletevehicle(vehicleId);
+      const deletevehicleData = await vehiclesService.deleteVehicle(vehicleId);
 
       res.status(200).json({ data: deletevehicleData, message: 'deleted' });
     } catch (error) {
@@ -75,7 +75,7 @@ const VehicleController = () => {
     getVehicleByRegistration,
     getVehicles,
     updateVehicle,
-    getVehicleByUserId,
+    getAllVehicleByUserId,
   };
 };
 

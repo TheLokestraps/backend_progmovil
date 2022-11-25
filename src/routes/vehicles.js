@@ -2,7 +2,7 @@ import { Router } from 'express';
 import VehicleController from '../controllers/vehicles.js';
 import authMiddleware from '../middlewares/auth.js';
 
-const UsersRoute = () => {
+const VehiclesRoute = () => {
   const path = '/vehicles';
   const router = Router();
   const controller = VehicleController();
@@ -17,4 +17,4 @@ const UsersRoute = () => {
   return { path, router };
 };
 
-export default UsersRoute;
+export default VehiclesRoute;
